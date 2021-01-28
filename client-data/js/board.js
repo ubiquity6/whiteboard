@@ -400,6 +400,9 @@ function updateDocumentTitle() {
 		var x = coords[0] | 0;
 		var y = coords[1] | 0;
 		var scale = parseFloat(coords[2]);
+
+		if (isNaN(scale)) scale = 1;
+
 		resizeCanvas({ x: x, y: y });
 		Tools.setScale(scale);
 		window.scrollTo(x * scale, y * scale);
