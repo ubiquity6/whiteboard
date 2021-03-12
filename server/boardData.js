@@ -28,7 +28,7 @@
 const S3_BUCKET = `composer-assets/home/shelf/whiteboard/sessions`;
 
 const aws = require('aws-sdk');
-aws.config.region = 'eu-west-1';
+aws.config.region = 'us-east-1';
 
 s3 = new aws.S3();
 
