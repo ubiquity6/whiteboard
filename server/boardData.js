@@ -25,6 +25,13 @@
  * @module boardData
  */
 
+const S3_BUCKET = `composer-assets/home/shelf/whiteboard/sessions`;
+
+const aws = require('aws-sdk');
+aws.config.region = 'eu-west-1';
+
+s3 = new aws.S3();
+
 var fs = require('./fs_promises.js')
 	, log = require("./log.js").log
 	, path = require("path")
@@ -170,6 +177,14 @@ BoardData.prototype.save = async function (file) {
 				'size': board_txt.length,
 				'delay_ms': (Date.now() - this.lastSaveDate),
 			});
+
+			// save to s3
+			var uploadParams = { Bucket: S3_BUCKET, Key: this.name, Body: fs.createReadStream(file) };
+			s3.upload(uploadParams, function (err, data) {
+				if (err) {
+					log("Failed to upload board to S3: ", err);
+				}
+			});
 		} catch (err) {
 			log("board saving error", {
 				'err': err.toString(),
@@ -229,10 +244,14 @@ BoardData.prototype.validate = function validate(item, parent) {
 BoardData.load = async function loadBoard(name) {
 	var boardData = new BoardData(name), data;
 	try {
-		data = await fs.promises.readFile(boardData.file);
-		boardData.board = JSON.parse(data);
-		for (id in boardData.board) boardData.validate(boardData.board[id]);
-		log('disk load', { 'board': boardData.name });
+		// load from s3
+		var params = { Bucket: S3_BUCKET, Key: name };
+		var data = await s3.getObject(params).promise();
+		if (data) {
+			boardData.board = JSON.parse(data.Body.toString('utf-8'));
+			for (id in boardData.board) boardData.validate(boardData.board[id]);
+			log('disk load', { 'board': boardData.name });
+		}
 	} catch (e) {
 		log('empty board creation', {
 			'board': boardData.name,
