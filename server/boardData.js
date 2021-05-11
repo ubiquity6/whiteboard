@@ -27,10 +27,8 @@
 
 const S3_BUCKET = process.env.S3_BUCKET_NAME;
 
-console.log(`S3_BUCKET = ${S3_BUCKET}`);
-
 const aws = require('aws-sdk');
-aws.config.region = 'us-east-1';
+aws.config.region = process.env.S3_REGION;
 
 s3 = new aws.S3({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
