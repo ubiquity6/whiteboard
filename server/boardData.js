@@ -25,12 +25,17 @@
  * @module boardData
  */
 
-const S3_BUCKET = `composer-assets/home/shelf/whiteboard/sessions`;
+const S3_BUCKET = process.env.S3_BUCKET_NAME;
+
+console.log(`S3_BUCKET = ${S3_BUCKET}`);
 
 const aws = require('aws-sdk');
 aws.config.region = 'us-east-1';
 
-s3 = new aws.S3();
+s3 = new aws.S3({
+	accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+	secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
 
 var fs = require('./fs_promises.js')
 	, log = require("./log.js").log
