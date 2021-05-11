@@ -1,0 +1,17 @@
+{
+  "name": "UBQ Whiteboard",
+  "description": "A freeform whiteboard game",
+  "repository": "https://github.com/ubiquity6/whiteboard",
+  "stack": "heroku-18",
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "hobby"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
